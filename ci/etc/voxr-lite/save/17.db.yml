@@ -1,0 +1,84 @@
+server:
+  db:
+    backend: mysql    # current backend
+    env: devel          # current mode: dev/staging/prod, ...
+    debug: true       # use mysql/gorm LogMode(true)
+    backends:
+      mysql:
+        devel:
+          username: dev
+          password: 123456
+          url: tcp(db-main-host:3306)/db_im?charset=utf8&parseTime=true
+          connectionTimeout: 30000
+          maxOpenConns: 100
+          maxIdleConns: 10
+        prod:
+          username: dev
+          password: 123456
+          url: tcp(db-main-host:3306)/db_im?charset=utf8&parseTime=true
+          connectionTimeout: 30000
+          maxOpenConns: 100
+          maxIdleConns: 10
+        dev-last:
+          hosts:
+            - localhost:3306
+          username: core
+          password: "Cofy$A99Izol"
+          database: im_core
+          desc: mysql db development mode
+      couchdb:
+        dev:
+          hosts:
+            - couchdb1:5984
+            - couchdb2:5984
+          username: core
+          password: "Cofy$A99Izol"
+          database: im_core
+      mongodb:
+        dev:
+          hosts:
+            - "127.0.0.1:27017"
+          replicaSet:
+          database: im_core
+          username:
+          password:
+          desc: mongodb configurations
+        dev-repl:
+          hosts:
+            - "127.0.0.1:27017"
+            - "localhost:27018"
+            - "localhost:27019"
+          replicaSet: rsdev
+          database: im_core
+          username: root
+          password: root
+          desc: mongodb configurations
+        prod:
+          hosts:
+            - "mongo.ops.local"
+          replicaSet:
+          port: 3717
+          username: "core"
+          password: "Cofy$A99Izol"
+          database: "im_core"
+          desc: mongodb configurations
+      cassandra:
+        dev:
+          hosts:
+            - 127.0.0.1:9042
+          username: "core"
+          password: "Cofy$A99Izol"
+          database: im_core
+          minWritten: 1
+          disableInitialHostLookup: true
+        prod:
+          hosts:
+            - 114.55.229.241:9042
+            - 120.26.143.72:9042
+          # Port: 9042
+          username: core
+          password: "Cofy$A99Izol"
+          database: im_core
+          minWritten: 1
+
+

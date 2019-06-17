@@ -1,0 +1,41 @@
+server:
+  forwarders:
+    list:
+      - balancer: round-robin  # roundRobin, random
+        prefix: /bal
+        targets:
+          - url: http://localhost:7011
+            name: Axx
+            meta:
+              "Ver": "1.0"
+              "App": Axx
+              "Rank": 50
+          - url: http://localhost:7012
+            meta:
+              Ver: ">1.0"
+              Rank: 50
+      - balancer: random
+        prefix: /bal-rnd
+        targets:
+          - url: http://localhost:7011/
+          - url: http://localhost:7012/
+
+      - balancer: round-robin  # roundRobin, random
+        prefix: /c
+        targets:
+          - url: http://localhost:8081/aaa
+            name: Axx
+            meta:
+              "Ver": "1.0"
+              "App": Axx
+              "Rank": 50
+          - url: http://localhost:8082/bbb
+            meta:
+              Ver: ">1.0"
+              Rank: 50
+
+    rewrite:
+      "/c/*": "/$1"
+      "/tt/*": "/$1"
+
+

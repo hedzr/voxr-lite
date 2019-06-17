@@ -1,0 +1,30 @@
+---
+# zag configuration file format version 1
+config: config
+version: 1.0
+
+app:
+  env-prefix: IM
+  runmode: devel        # devel, prod, staging, docker
+  internal-mode: true   # simulate all other services such as im-auth, im-user, im-xxx
+  verbose: true
+  debug: true
+
+  # version-sim: 1.0.0   # simulate
+
+  server:
+    # port: 3111
+
+    logger:
+      level: INFO
+
+    foreground: false
+
+
+    xs-server:
+      enabled: true     # this will disabled the native http2 server skeleton codes.
+
+
+
+
+

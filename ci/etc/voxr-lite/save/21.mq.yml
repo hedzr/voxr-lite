@@ -1,0 +1,227 @@
+app:
+  server:
+    pub:
+      deps:
+
+        mq:
+          backend: rabbitmq    # current backend
+          env: devel           # current mode: devel/staging/prod, ...
+          debug: true          # uses debug mode
+          backends:
+            rabbitmq:
+              devel:
+                url: "amqp://fxuser:fxuser123456@mq-main-host:5672/"
+                connectionTimeout: 30000
+                maxOpenConns: 100
+                maxIdleConns: 10
+                vhost: fx
+              prod:
+                url: "amqp://fxuser:fxuser123456@mq-main-host:5672/"
+                connectionTimeout: 30000
+                maxOpenConns: 100
+                maxIdleConns: 10
+                vhost: fx
+
+          clients:
+            - im_event_bus
+
+          publish:
+            logger_bus:
+            monitor_bus:
+            config_cast:
+
+            # im-platform event cast
+            im_event_bus:
+              exchange:
+                exchange:   fx.ex.event_bus
+                type:       topic
+                passive:    false
+                durable:    false
+                autoDelete: false
+                internal:   false
+                noWait:     false
+                arguments:  {}
+              queue:
+                queue:      fx.q.event_bus
+                passive:    false
+                durable:    true
+                exclusive:  false
+                autoDelete: false
+                noWait:     false
+                arguments:  {}
+              bind:
+                queue:
+                exchange:
+                routingKey: fx.im.#
+                noWait:     false
+                arguments:  {}
+
+            im_hook_event_bus:
+              exchange:
+                exchange:   fx.ex.event_bus
+                type:       topic
+                passive:    false
+                durable:    false
+                autoDelete: false
+                internal:   false
+                noWait:     false
+                arguments:  {}
+              queue:
+                queue:      fx.q.event_bus.hooks
+                passive:    false
+                durable:    false   # webhook 事件可以被丢弃
+                exclusive:  false
+                autoDelete: false
+                noWait:     false
+                arguments:  {}
+              bind:
+                queue:
+                exchange:
+                routingKey: fx.im.hooks.#
+                noWait:     false
+                arguments:  {}
+
+            im_app_event_bus:
+              exchange:
+                exchange:   fx.ex.event_bus
+                type:       topic
+                passive:    false
+                durable:    false
+                autoDelete: false
+                internal:   false
+                noWait:     false
+                arguments:  {}
+              queue:
+                queue:      fx.q.event_bus.apps
+                passive:    false
+                durable:    true
+                exclusive:  false
+                autoDelete: false
+                noWait:     false
+                arguments:  {}
+              bind:
+                queue:
+                exchange:
+                routingKey: fx.im.apps.#
+                noWait:     false
+                arguments:  {}
+
+            # im-platform event bus
+            im_event_cast:
+              exchange:
+                exchange:   fx.ex.event_cast
+                type:       fanout # direct, fanout, topic
+                passive:    false
+                durable:    false
+                autoDelete: false
+                internal:   false
+                noWait:     false
+                arguments:  {}
+              queue:
+                queue:      fx.q.event_cast
+                passive:    false
+                durable:    true    # 广播的任何事件都必须持久化
+                exclusive:  false
+                autoDelete: false
+                noWait:     false
+                arguments:  {}
+              bind:
+                queue:
+                exchange:
+                routingKey: fx.im.# # as a sample: info,warning,error
+                noWait:     false
+                arguments:  {}
+
+            sms_req:
+              exchange:
+                exchange:   fx.ex.sms_req
+                type:       topic # direct, fanout, topic
+                passive:    false
+                durable:    false
+                autoDelete: false
+                internal:   false
+                noWait:     false
+                arguments:  {}
+              queue:
+                queue:      fx.q.sms_req
+                passive:    false
+                durable:    true
+                exclusive:  false
+                autoDelete: false
+                noWait:     false
+                arguments:  {}
+              bind:
+                queue:
+                exchange:
+                routingKey: fx.sms.#
+                noWait:     false
+                arguments:  {}
+
+            mail_req:
+              exchange:
+                exchange:   fx.ex.mail_req
+                type:       topic       # direct, fanout, topic
+                passive:    false
+                durable:    false
+                autoDelete: false
+                internal:   false
+                noWait:     false
+                arguments:  {}
+              queue:
+                queue:      fx.q.email_req
+                passive:    false
+                durable:    true
+                exclusive:  false
+                autoDelete: false
+                noWait:     false
+                arguments:  {}
+              bind:
+                queue:
+                exchange:
+                routingKey: fx.mail.#      # fx.mail.{user.{login,register,find-pwd},org.{sns.{like,fav,mentioned,...},ann.{publish,revoke}}}
+                noWait:     false
+                arguments:  {}
+            cmdlet:
+              exchange:
+                exchange:   fx.ex.cmdlet
+                type:       topic       # direct, fanout, topic
+                passive:    false
+                durable:    false
+                autoDelete: false
+                internal:   false
+                noWait:     false
+                arguments:  {}
+              queue:
+                queue:      fx.q.cmdlet
+                passive:    false
+                durable:    false
+                exclusive:  false
+                autoDelete: false
+                noWait:     false
+                arguments:  {}
+              bind:
+                queue:
+                exchange:
+                routingKey: fx.exec.#
+                noWait:     false
+                arguments:  {}
+
+          queues_default:
+            notify_base: "http://localhost:8080"
+            notify_timeout: 5
+            retry_times: 40
+            retry_duration: 300
+            binding_exchange: fishtrip
+          queues:
+            - queue_name: "processor"
+              notify_path: "/test.html"
+              routing_key:
+                - "order.state.paid"
+            - queue_name: "wakasms.orders"
+              notify_path: "/test.html"
+              routing_key:
+                - "order.state.*"
+
+
+
+

@@ -1,0 +1,93 @@
+app:
+  server:
+
+    pub:
+      deps:
+        db:
+          backend: mysql    # current backend
+          # env: devel        # current mode: devel/staging/prod, ...
+          # using top-level 'runmode' as 'env' now...
+          debug: true       # use mysql/gorm LogMode(true)
+          backends:
+            mysql:
+              docker:
+                hosts:
+                  - db-main-host:3306
+                username: root
+                password: "Cofy#A99Izol"
+                database: im_core
+              devel:
+                hosts:
+                  - db-main-host:33306
+                username: root
+                password: "Cofy#A99Izol"
+                database: im_core
+              devel-local:
+                hosts:
+                  - localhost:3306
+                username: core
+                password: "Cofy#A99Izol"
+                database: im_core
+                desc: mysql db development mode
+              prod:
+                hosts:
+                  - db.ops.local:3306
+                username: core
+                password: "Cofy#A99Izol"
+                database: im_core
+            couchdb:
+              devel:
+                hosts:
+                  - couchdb1:5984
+                  - couchdb2:5984
+                username: core
+                password: "Cofy#A99Izol"
+                database: im_core
+            mongodb:
+              devel:
+                hosts:
+                  - "127.0.0.1:27017"
+                replicaSet:
+                database: im_core
+                username:
+                password:
+                desc: mongodb configurations
+              dev-repl:
+                hosts:
+                  - "127.0.0.1:27017"
+                  - "localhost:27018"
+                  - "localhost:27019"
+                replicaSet: rsdev
+                database: im_core
+                username: root
+                password: root
+                desc: mongodb configurations
+              prod:
+                hosts:
+                  - "mongo.ops.local"
+                replicaSet:
+                port: 3717
+                username: "core"
+                password: "Cofy#A99Izol"
+                database: "im_core"
+                desc: mongodb configurations
+            cassandra:
+              devel:
+                hosts:
+                  - 127.0.0.1:9042
+                username: "core"
+                password: "Cofy#A99Izol"
+                database: im_core
+                minWritten: 1
+                disableInitialHostLookup: true
+              prod:
+                hosts:
+                  - 114.55.229.241:9042
+                  - 120.26.143.72:9042
+                # Port: 9042
+                username: core
+                password: "Cofy#A99Izol"
+                database: im_core
+                minWritten: 1
+
+

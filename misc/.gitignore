@@ -1,0 +1,7 @@
+*.iml
+target
+test
+*.idea
+main
+bin/
+*.so

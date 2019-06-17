@@ -1,0 +1,154 @@
+app:
+  server:
+    # 1 or 2: HTTP/1.1 only, or HTTP/2 supports
+    mode: 1
+
+    serviceName: voxr-core
+
+    id: # service id, default format: '%appName%:<host>:<rpc_address>:<port>'
+
+    serviceTags:          # consul service Tags field
+      - "peer"            # master, or slave, or peer. peer表示前置SLB负责gwkool的集群
+      - "ready"
+      - "ms"
+      - "golang"
+      #- "memory:16G"
+      #- "core:4"
+      #- "arch:amd64"
+      #- "os:xenial"
+    serviceMeta: []       # consul service NodeMeta field
+
+    # listener address 为空或 0.0.0.0，表示监听全部网络接口的全部网络地址；
+    # 可以逗号分隔格式："127.0.0.1,192.168.0.71"
+    address:
+    # rpc address 是暴露给其他服务所使用的ip地址, 只能给出一个单个ip地址。
+    # 留空则采用hostname，要求其他服务首先解析主机名后才能得到地址。
+    rpc_address:
+
+    # restful API 端口自动被注册到服务中心
+    # 2911+1 被保留用作其它用途：不同的协议
+    # 80 被预保留为用于 autocert
+    port: 2911
+
+    grpc:
+      # main 指示的 grpc 服务将被自动注册到服务中心;
+      # to-do 其它服务根据 disabled 标志决定是否会被自动实例化为服务;
+      main: voxr-lite
+      settings:
+        ping-period: 20s
+        query-timeout: 10s
+      voxr-lite:
+        listen: :2913         # 从这里开始自动增量，自动寻找可用端口号，每个服务保留10个端口号作为备用区间
+        id: inx.im.core
+      apply:
+        listen: :2923         # apply service
+        id: inx.im.apply
+        disabled: false       # default is false
+
+    autocert:
+      enabled: false
+
+    tls:
+      cert: "$CFG_DIR/assets/cert.pem"   # 值可以为空，但为空时不能支持 mode=2 HTTP/2
+      key:  "$CFG_DIR/assets/key.pem"
+
+    jwt:
+      enabled: true
+      signingMethod: "HS256"
+      signingKey: "CijxvffPbKUnwHGA63BJQ48qYuX8ta+VzWO4D9qyNBLm1jGmBdEpZz93enZlRWDaX70X2s17oNKHbofLYg3xAr0TsIf04QSLjbh0hG0EDuB5bYBkWAiY0CQQCr8Q2rtF5bALPqeO6BRyA9obldASKN5DPgoXkvcXvzlP8ZAQHWOv9aNr905Z7AkEAkKLkmoPad6Mw+F8ApkG0wAY8A41VxRooNl0QZZ+jnuBAQUAA4GNADCBiQKBgQ0iK5GuktBV"    # 生产环境必须替换
+      contextKey: "user"                    #
+      tokenLookup: "header:?"               # or "query:?", or "cookie:?" # ? will be replaced with "Authorization"
+      authScheme: "Bearer"                  #
+      #expires: 604800                      # in seconds. 604800 = 7 days
+      expires: 86400                        # in seconds. 86400 = 1 day
+      loginTokenNumber: 82376               # security number used as login token.
+      loginUrl: /login                      # default url: /login
+      signupUrl: /signup                    # default url: /signup
+      refreshTokenUrl: /refresh-token       # default url: /refresh-token
+      loginSuccessUrl:                      # default: /
+      logoutCompletedUrl:                   # default: /
+
+
+    # 网关是否在应答报文Headers中加入 x-server 字段
+    # 生产环境要注意，不要无意中暴露服务器机密信息
+    headerXServer: true
+
+    # static files
+    static:
+      # root: ./static                      # 相对目录基于工作目录 | 作废：# <daemon executable directory>/static
+      root: "/var/lib/$APPNAME/public"      # 如果没有预先创建，会使用默认路径：<executable-root>/<urlPrefix>
+      index: index.html                     # Index file for serving a directory. Optional. Default value "index.html".
+      list: true                            # true if u want directory/files list | 生产环境必须关闭，杜绝泄露
+      forceList: false                      # 除非一定要在生产环境启用list功能
+      # 独立的 /static 文件映射，适合独立工作
+      # html5: false                        # true if u want a SPA like
+      # urlPrefix:                          # default: /static
+      #
+      # 采用 SPA 模式，将 static/*.* 映射到 /，适合于将 VUE 应用部署到 static/ 之中。
+      urlPrefix: /public
+      html5: true
+
+    # 在给定位置查找 .gtpl/.html 文件，当内部使用html模板功能时
+    templates:
+      root: ./templates       # 相对目录基于工作目录
+
+    upload:
+      base: /var/lib/$APPNAME/public/uploads # 如果没有预先创建，会使用默认路径：<static-root>/<basename-of-base>  # 相对目录基于工作目录; 或者使用绝对路径; 生产环境中，...
+      url: /public/uploads        # 不可与 base 的后半部分不同！
+      autoCreate: true
+      formField: file
+
+    bodyDump:
+      enabled: true               # default is false. NOTICE: it should be disabled under production mode always.
+
+    bodyLimit: 20M
+
+    gzip:
+      enabled: true
+      level: 5
+      exceptions: []
+
+    csrf:
+      enabled: false
+      tokenLookup: header:X-XSRF-TOKEN
+
+    cors:
+      origins:
+        - http://localhost:8080
+        - http://localhost:5000
+        # - http://localhost:3111 # skip self
+        - http://localhost
+        - https://localhost
+
+    secure:
+      enabled: true
+
+
+    websocket:
+      # 生产环境考虑使用 30s 的刷新周期，用于更新 ws 客户端的登记情况
+      client-expiration: 60s   # core ws-client hot-link's expiration. for redis_op
+      maxMessageSize: 4096
+      pptt:
+        send-queue: # send-queue 是 client 持有的
+          size: 32
+        recv-queue: # recv-queue 是 hub 持有的
+          size: 64
+        push-queue: # push-queue 是 hub 持有的
+          size: 64
+      log:
+        dump-clients: false
+        dump-duration: 16s
+      send:
+        u-text: false
+        send-msg: true
+
+    im-core:
+      pool:
+        size: 100
+        expire: 1h
+
+
+
+
+
+

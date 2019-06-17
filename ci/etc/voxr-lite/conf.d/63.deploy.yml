@@ -1,0 +1,5 @@
+app:
+  server:
+
+  deploy: # 部署所需要的宣告
+

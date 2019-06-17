@@ -1,0 +1,73 @@
+server:
+  # zag 通过询问 registrar 以获知一个服务的有效节点列表
+  # zag 也注册自身的节点和服务信息到 registry 中
+  registrar:
+    enabled: true
+    source: etcd         # consul or etcd
+    env: prod            # 选择一个配置
+    ttl: 29              # 注册表项的失效时间，暂时仅对etcd (实际TTL为 ttl+1 seconds)
+    dns-at-first: false  # only for dns+consul source
+    consul: # 可以建立DNS+CONSUL的转发链;也可以仅CONSUL集群
+      # 本机开发
+      dev:
+        addr: 127.0.0.1:8500
+        seeds:
+        cert:
+        key:
+        ca:
+        user:
+        pass:
+        timeout:
+        root:   # root key, "root" if empty
+        # consul 和 etcd 机制不同，
+        # etcd采用相对较短的TTL撤销注册表项，没有critical状态，
+        # consul使用相同的TTL标记到critical / TTL expired，
+        # 但使用较长的 deregister-critical-service-after 撤销注册表项
+        deregister-critical-service-after: 30s  # default 30s
+      # 局域网（内网）
+      this-staging:
+        addr: 192.168.0.138:8500
+      # 线上开发环境
+      staging:
+        addr: localhost:8500
+      # 同时适用于 aliyun, awscn
+      production:
+        addr: consul.ops.local:8500
+      prod:
+        addr: 127.0.0.1:8500
+    etcd:
+      #      production:
+      #        addr: etcd.ops.local:2379
+      #        root: v  # root key, "root" if empty
+      docker:
+        peers: etcd-main-host:2379
+        command-timeout: 7s
+        timeout: 5s
+        root: v  # root key, "root" if empty
+        no-heartbeat-log: true
+      prod:
+        peers: etcd-main-host:2379
+        user:
+        pass:
+        command-timeout: 7s
+        timeout: 5s
+        root: voxr  # root key, "root" if empty
+        routes:
+          - schema:
+            regexp:
+        no-heartbeat-log: true  # 默认时，仅前台运行时打印该日志，daemon时不会打印；为 true 时从不打印
+      devel:
+        # 格式：localhost:2379,localhost:22379,localhost:32379
+        peers: etcd-main-host:32379
+        #cert:
+        #key:
+        #ca:
+        user:
+        pass:
+        timeout: 5s
+        command-timeout: 5s
+        root: voxr.test  # root key, "root" if empty
+        no-heartbeat-log: true
+
+
+

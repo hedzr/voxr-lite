@@ -1,0 +1,79 @@
+app:
+  server:
+
+    deps-debug: true
+
+    deps:   # 对其它微服务的依赖性宣告 (静态定义，只用于快速初始化和演示目的)
+      apply:
+        id: inx.im.apply
+        # addr: 192.168.0.72:7112
+        # host: 192.168.0.72
+        # port: 7112
+        disabled: true
+      vx-core:
+        id: inx.im.core
+        # addr: 192.168.0.72:7112
+        # host: 192.168.0.72
+        # port: 7112
+        # disabled: true
+        balancer-sample:
+          type: random      # random, round-robin, wrr (weighted rr), weighted-version
+        balancer-sample-r:
+          type: random
+        balancer-sample-rr:
+          type: round-robin
+        balancer:
+          type: weighted-version
+          sub-type: round-robin
+          versions:
+            # see also: https://semver.org/lang/zh-CN/
+            # and: https://github.com/Masterminds/semver
+            "1.1.x": 90
+            "1.2.x": 10
+      vx-misc:
+        id: inx.im.misc
+        # 启用服务注册中心之后，则不再需要静态定义
+        # addr: 192.168.0.31:50150
+        balancer:
+          type: weighted-version
+          versions:
+            "1.1.x": 90
+            "1.2.x": 10
+      vx-auth:
+        id: inx.im.auth
+        # 启用服务注册中心之后，则不再需要静态定义
+        # addr: 192.168.0.31:50150
+        balancer:
+          type: weighted-version
+          versions:
+            "1.1.x": 90
+            "1.2.x": 10
+      vx-user:
+        id: inx.im.user
+        # addr: 192.168.0.31:50150
+        balancer:
+          type: weighted-version
+          versions:
+            "1.1.x": 90
+            "1.2.x": 10
+      vx-storage:
+        id: inx.im.storage
+        #addr: 192.168.0.28:8090
+        balancer:
+          type: weighted-version
+          versions:
+            "1.1.x": 90
+            "1.2.x": 10
+      vx-circle:
+        id: inx.im.circle
+        #addr: 192.168.0.28:8090
+        balancer:
+          type: weighted-version
+          versions:
+            "1.1.x": 90
+            "1.2.x": 10
+
+    # 对基础设施的依赖
+    pub:
+      deps:
+        any-deps-here:

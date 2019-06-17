@@ -1,0 +1,13 @@
+server:
+
+  # tsdb: influxdb
+  tsdb:
+    current:
+      addr: http://localhost:8086
+      user:
+      pass:
+      database:
+      mode: HTTP
+      flush: 10     # 每10点刷出到TSDB (default=500); 生产环境根据负载情况选择500-5000，数值太大会导致内存消耗过大
+      flushTTL: 15  # 每15秒刷出 (default=15)
+
