@@ -48,8 +48,8 @@ func (s *Pooled) Init() {
 
 func (s *Pooled) initMappings() {
 	s.pooledEntries = map[v10.Op]*CmdInfo{
-		v10.Op_OrgsAll:   &CmdInfo{},
-		v10.Op_TopicsAll: &CmdInfo{},
+		v10.Op_OrgsAll:   {},
+		v10.Op_TopicsAll: {},
 	}
 }
 

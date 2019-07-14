@@ -233,7 +233,7 @@ func (s *MsgDao) updateMsgLastPointsTx(tx *gorm.DB, in *models.Msg, toMembers ..
 	}
 
 	// and, insert the missed records
-	for to, _ := range theUsersMap {
+	for to := range theUsersMap {
 		logrus.Printf("mlps - %v", to)
 		if err = tx.Create(&models.MsgLastPt{MsgIdNewest: in.Id, TopicId: in.TopicId, MemberId: to}).Error; err != nil {
 			logrus.Errorf("CANNOT insert MsgLastPt: %v, %v", rows, err)

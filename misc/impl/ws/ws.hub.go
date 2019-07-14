@@ -219,7 +219,7 @@ func (h *WsHub) __dump(tm time.Time) {
 
 func (h *WsHub) stop() {
 	h.mutex.RLock()
-	for k, _ := range h.clients {
+	for k := range h.clients {
 		k.conn.Close() // it will break the for loop in ws_hello()
 		k.conn = nil
 	}

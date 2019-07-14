@@ -4,8 +4,6 @@
 
 package chat
 
-type ()
-
 func (h *Hub) preInitCommands() {
 
 	// apps/clients 通过 websocket 发送 PB 消息，Hub 负责将这些消息通过 Hub.commands 分发到具体的处理逻辑
