@@ -21,7 +21,7 @@ require (
 	github.com/golang/protobuf v1.3.1
 	github.com/gorilla/websocket v1.4.0
 	github.com/hashicorp/consul/api v1.1.0
-	github.com/hedzr/cmdr v1.0.0
+	github.com/hedzr/cmdr v1.0.1
 	github.com/hedzr/logex v1.0.0
 	github.com/hedzr/voxr-api v0.0.0
 	github.com/hedzr/voxr-common v0.0.0
