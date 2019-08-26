@@ -44,7 +44,7 @@ func doStart() {
 	chat.SetMaxMessageSize(vxconf.GetIntR("server.websocket.max-size", 4096))
 	chat.StartHub()
 
-	logrus.Infof("    Starting gRPC Manager...")
+	logrus.Infof("    Starting gRPC Clients Manager...")
 	// grpc service manager
 	scheduler.Start()
 	// internalMode

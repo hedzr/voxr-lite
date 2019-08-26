@@ -74,6 +74,7 @@ func RequestRefreshAllClients() {
 	grpcHub.refreshClients <- ""
 }
 
+
 // newClient named a client as the value of `serviceName`.
 func (h *GrpcHub) newClient(serviceName string, dr *DepRecord) (client *GrpcClient) {
 	if v, ok := h.byIds[serviceName]; ok {
