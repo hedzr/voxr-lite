@@ -5,7 +5,9 @@
 package dbe
 
 import (
-	"github.com/go-xorm/core"
+	"xorm.io/core"
+
+	// "xorm.io/core"
 	"github.com/hedzr/voxr-api/models"
 	"github.com/sirupsen/logrus"
 	"strings"
