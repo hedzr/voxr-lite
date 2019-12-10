@@ -15,7 +15,7 @@ func Entry() {
 
 	// logrus.SetLevel(logrus.DebugLevel)
 	// logrus.SetFormatter(&logrus.TextFormatter{ForceColors: true})
-	logex.Enable()
+	// logex.Enable()
 
 	// To disable internal commands and flags, uncomment the following codes
 	// cmdr.EnableVersionCommands = false
@@ -24,7 +24,10 @@ func Entry() {
 	// cmdr.EnableHelpCommands = false
 	// cmdr.EnableGenerateCommands = false
 
-	if err := cmdr.Exec(buildRootCmd()); err != nil {
+	if err := cmdr.Exec(buildRootCmd(),
+		cmdr.WithLogex(logrus.DebugLevel),
+		cmdr.WithWatchMainConfigFileToo(true),
+	); err != nil {
 		logrus.Errorf("Error: %v", err)
 	}
 
